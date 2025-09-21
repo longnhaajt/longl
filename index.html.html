@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Tạo câu chuyện thú vị về bạn</title>
+  <style>
+    :root{--accent:#6c5ce7;--bg:#f7f7fb}
+    body{font-family:Inter,system-ui,Arial;margin:0;background:var(--bg);display:flex;align-items:center;justify-content:center;height:100vh}
+    .card{background:white;width:92%;max-width:720px;padding:28px;border-radius:12px;box-shadow:0 8px 30px rgba(20,20,40,0.08)}
+    h1{margin:0 0 8px;font-size:22px;color:#212121}
+    p.lead{margin:0 0 18px;color:#444}
+    label{display:block;margin:10px 0 6px;color:#333;font-weight:600}
+    textarea{width:100%;min-height:180px;padding:12px;border-radius:8px;border:1px solid #e6e6ef;resize:vertical;font-size:15px}
+    .note{font-size:13px;color:#666;margin-top:8px}
+    .actions{display:flex;gap:10px;margin-top:16px}
+    button{background:var(--accent);color:white;border:none;padding:10px 16px;border-radius:8px;cursor:pointer}
+    button.secondary{background:#f1f1ff;color:#333}
+    .msg{margin-top:12px;font-size:14px}
+    .small{font-size:12px;color:#888;margin-top:12px}
+    footer{margin-top:18px;font-size:12px;color:#999}
+    @media (max-width:480px){.card{padding:18px}}
+  </style>
+</head>
+<body>
+  <main class="card" role="main">
+    <h1>Tạo câu chuyện thú vị về bạn</h1>
+    <p class="lead">Dưới đây là chỗ để bạn viết một câu chuyện ngắn — tất cả đều ẩn danh.</p>
+
+    <form id="storyForm">
+      <label for="storyInput">Ghi nội dung bạn muốn kể</label>
+      <textarea id="storyInput" name="story" placeholder="Viết câu chuyện của bạn ở đây..."></textarea>
+
+      <div class="note">Tất cả đều ẩn danh.</div>
+
+      <div class="actions">
+        <button type="submit">Gửi</button>
+        <button type="button" class="secondary" id="clearBtn">Xoá</button>
+      </div>
+
+      <div class="msg" id="status"></div>
+      <div class="small">Ghi chú: để email tự động nhận nội dung mà không cần mở ứng dụng email của người gửi, cần cấu hình backend hoặc dịch vụ gửi thư.</div>
+
+    </form>
+
+    <footer>© 2025 - Trang gửi câu chuyện ẩn danh</footer>
+  </main>
+
+  <script>
+    // Email người nhận đã được cấu hình sẵn
+    const RECIPIENT = 'longnhatjjjj@gmail.com';
+    // ==========================================================
+
+    const form = document.getElementById('storyForm');
+    const textarea = document.getElementById('storyInput');
+    const status = document.getElementById('status');
+    const clearBtn = document.getElementById('clearBtn');
+
+    function encodeMailtoBody(text){
+      // Thay newline thành %0D%0A và encode
+      return encodeURIComponent(text).replace(/%0A/g, '%0D%0A');
+    }
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      const story = textarea.value.trim();
+      if(!story){
+        status.textContent = 'Vui lòng viết nội dung trước khi gửi.';
+        status.style.color = 'crimson';
+        return;
+      }
+
+      // Tạo mailto: link để mở ứng dụng email mặc định với nội dung
+      const subject = encodeURIComponent('Gửi câu chuyện ẩn danh từ trang web');
+      const body = encodeMailtoBody(story + '\n\n---\nGửi từ trang: Tạo câu chuyện thú vị về bạn');
+      const mailto = `mailto:${RECIPIENT}?subject=${subject}&body=${body}`;
+
+      // Mở mailto (mở mail client của người dùng)
+      window.location.href = mailto;
+
+      status.textContent = 'Ứng dụng email sẽ mở để bạn hoàn tất gửi (nếu trình duyệt cho phép).';
+      status.style.color = 'green';
+    });
+
+    clearBtn.addEventListener('click', function(){
+      textarea.value = '';
+      status.textContent = '';
+    });
+  </script>
+</body>
+</html>
